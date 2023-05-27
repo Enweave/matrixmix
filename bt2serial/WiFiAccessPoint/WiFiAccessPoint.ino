@@ -17,21 +17,38 @@
 #include <ArduinoJson.h>
 #include <WebServer.h>
 
-#define LED_BUILTIN 2   // Set the GPIO pin where you connected your test LED or comment this line out if your dev board has a built-in LED
+// #define LED_BUILTIN 2   // Set the GPIO pin where you connected your test LED or comment this line out if your dev board has a built-in LED
 
 // Set these to your desired credentials.
 const char *ssid = "yourAP";
 const char *password = "12345678";
 
+
+
+const uint8_t NUMBER_OF_FADERS = 36;
+uint8_t faderValues[NUMBER_OF_FADERS];
+
 WebServer server(80);
 
-void testGet () {
+void hello () {
   DynamicJsonDocument doc(1024);
-  doc["foo"] = "bar";
+  doc["ver"] = "1";
   String output = "";
   serializeJson(doc, output);
   server.send(200, "application/json", output);
 }
+
+void getFaders () {
+  DynamicJsonDocument doc(1024);
+  JsonObject faders = doc.createNestedObject("faders");
+  for (uint8_t faderId=0; faderId < NUMBER_OF_FADERS; faderId++) {
+    faders[String(faderId)] = 123;
+  }
+  String output = "";
+  serializeJson(doc, output);
+  server.send(200, "application/json", output);
+}
+
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
@@ -45,7 +62,8 @@ void setup() {
   IPAddress myIP = WiFi.softAPIP();
   Serial.print("AP IP address: ");
   Serial.println(myIP);
-  server.on("/hello", HTTP_GET, testGet);
+  server.on("/faders", HTTP_GET, getFaders);
+  server.on("/", HTTP_GET, hello);
   server.begin();
   Serial.println("Server started");
 }

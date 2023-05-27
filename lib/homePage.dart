@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:matrixmix/faders.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
@@ -20,6 +24,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _counter = 0;
+  FadersData _faders = FadersData();
 
   void _incrementCounter() {
     setState(() {
@@ -31,6 +36,31 @@ class _HomePageState extends State<HomePage> {
       _counter++;
 
     });
+  }
+
+  void getFaders() async {
+    final faders = await _getFaders();
+    setState(() {
+      _faders = faders;
+    });
+    print(faders.faders);
+  }
+
+  Future<http.Response> _fetchGet() {
+    return http.get(Uri.parse('http://192.168.4.1/hello'));
+  }
+
+  Future<FadersData> _getFaders() async {
+    final response = await http.get(Uri.parse('http://192.168.4.1/faders'));
+    // parse the response
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response, then parse the JSON.
+      final parsed = jsonDecode(response.body);
+      return FadersData.fromJson(parsed);
+    } else {
+      // If the server did not return a 200 OK response, then throw an exception.
+      throw Exception('Failed to load faders');
+    }
   }
 
   @override
@@ -80,14 +110,9 @@ class _HomePageState extends State<HomePage> {
             // button
             ElevatedButton(
               onPressed: () {
-                // TRY THIS: Try changing the color here to a specific color (to
-                // Colors.amber, perhaps?) and trigger a hot reload to see the
-                // button change color while the other colors stay the same.
-                setState(() {
-                  _counter = 0;
-                });
+                getFaders();
               },
-              child: const Text('Reset'),
+              child: const Text('get faders'),
             ),
 
           ],
