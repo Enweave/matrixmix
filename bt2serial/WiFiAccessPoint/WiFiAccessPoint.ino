@@ -5,6 +5,7 @@
 #include <WebServer.h>
 #include "APMode.h"
 #include "ClientMode.h"
+#include "Web.h"
 
 #define MODE_SWITCH 4
 
@@ -26,9 +27,10 @@ void setup() {
         digitalWrite(LED_BUILTIN, LOW);
         startClient();
     }
+    setupWeb();
 }
 
 void loop() {
-//    server.handleClient();
-//    delay(2);
+    server.handleClient();
+    delay(2);
 }
