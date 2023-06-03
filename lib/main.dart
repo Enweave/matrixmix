@@ -29,7 +29,8 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.cyan),
+        colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF2D7072), brightness: Brightness.dark),
+        // dark theme
         useMaterial3: true,
       ),
       home: const HomePage(title: 'MatrixMix'),
