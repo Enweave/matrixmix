@@ -1,8 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:matrixmix/homePage.dart';
+import 'package:go_router/go_router.dart';
+import 'package:matrixmix/models.dart';
+import 'package:matrixmix/ui/homePage.dart';
+import 'package:matrixmix/ui/settingsPage.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(
+      create: (context) => DSPServerModel(), child: const MyApp()));
+}
+
+GoRouter router() {
+  return GoRouter(
+      initialLocation: '/',
+      routes: [
+    GoRoute(
+      path: '/',
+      builder: (context, state) {
+        return const HomePage(title: 'MatrixMix');
+      },
+    ),
+    GoRoute(
+      path: '/settings',
+      builder: (context, state) {
+        return const SettingsPage(title: 'Settings');
+      },
+    ),
+  ]);
 }
 
 class MyApp extends StatelessWidget {
@@ -11,29 +35,25 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'MatrixMix',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a blue toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF2D7072), brightness: Brightness.dark),
-        // dark theme
-        useMaterial3: true,
-      ),
-      home: const HomePage(title: 'MatrixMix'),
-    );
+    return MultiProvider(
+        providers: [
+          Provider(
+              create: (context) => DSPServerModel(),
+          ),
+          ChangeNotifierProvider<DSPServerModel>(
+            create: (context) => DSPServerModel(),
+          ),
+        ],
+        child: MaterialApp.router(
+          title: 'MatrixMix',
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(
+                seedColor: Color(0xFF2D7072), brightness: Brightness.dark),
+            // dark theme
+            useMaterial3: true,
+          ),
+          // home: const HomePage(title: 'MatrixMix'),
+          routerConfig: router(),
+        ));
   }
 }

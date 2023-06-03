@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:matrixmix/settings.dart';
+
 class FaderBase {
   bool isBipolar;
   int value = 0;
@@ -62,4 +65,27 @@ class FaderGroupConfig {
     name = name;
     faders = faders;
   }
+}
+
+class DSPServerModel extends ChangeNotifier {
+  String hostName = '';
+  bool isConnected = false;
+  int currentSubmix = 1;
+  Map<String, int> faders = {};
+
+  DSPServerModel({this.hostName = ApiInfo.defaultHost}) {
+    hostName = hostName;
+  }
+
+  void updateConnectionStatus(bool status) {
+    isConnected = status;
+    notifyListeners();
+  }
+
+  void updateCurrentSubmix(int submix) {
+    currentSubmix = submix;
+    notifyListeners();
+  }
+
+  void update() {}
 }

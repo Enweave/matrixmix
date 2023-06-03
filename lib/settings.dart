@@ -76,3 +76,15 @@ FaderGroupConfig getFaderGroupConfigMainPage(int groupId) {
 
   return resultGroup;
 }
+
+class ApiInfo {
+  static const String defaultHost = '192.168.1.53';
+  static const String defaultScheme = 'http//';
+
+  Uri getHelloUrl({String host = defaultHost}) {
+    return Uri.parse('$defaultScheme$host/');
+  }
+  Uri getFadersUrl({String host = defaultHost}) {
+    return Uri.parse('$defaultScheme$host/faders');
+  }
+}
