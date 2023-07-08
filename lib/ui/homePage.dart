@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:matrixmix/settings.dart';
 import 'package:matrixmix/ui/faders.dart';
 import 'package:provider/provider.dart';
 
@@ -59,7 +60,7 @@ class _HomePageState extends State<HomePage>
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: TitleTextWidget(title: widget.title),
-        bottom: TabBar(controller: _tabController, tabs: [
+        bottom: TabBar(controller: _tabController, tabs: const [
           Tab(text: 'Main'),
           Tab(text: 'Group 1'),
           Tab(text: 'Group 2'),
@@ -68,13 +69,14 @@ class _HomePageState extends State<HomePage>
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
-              context.pushReplacement('/settings');
+              // go to settings route
+              context.goNamed(SETTINGS_PAGE);
             },
           ),
         ],
       ),
       body: Center(
-          child: TabBarView(controller: _tabController, children: [
+          child: TabBarView(controller: _tabController, children: const [
         FaderListWidget(faderGroupId: 0),
         FaderListWidget(faderGroupId: 1),
         FaderListWidget(faderGroupId: 2),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:matrixmix/settings.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FaderBase {
   bool isBipolar;
@@ -26,11 +27,11 @@ class StereoFader {
   final int deviceMinValue = 0;
   final int deviceMaxValue = 255;
 
-  StereoFader(
-      {this.name = '<none>',
-      this.leftChannelid = '<none>',
-      this.rightChannelid = '<none>',
-    }) {
+  StereoFader({
+    this.name = '<none>',
+    this.leftChannelid = '<none>',
+    this.rightChannelid = '<none>',
+  }) {
     name = name;
     leftChannelid = leftChannelid;
     rightChannelid = rightChannelid;
@@ -68,13 +69,21 @@ class FaderGroupConfig {
 }
 
 class DSPServerModel extends ChangeNotifier {
+  SharedPreferences prefs;
   String hostName = '';
   bool isConnected = false;
-  int currentSubmix = 1;
+  int currentSubmix = 0;
   Map<String, int> faders = {};
 
-  DSPServerModel({this.hostName = ApiInfo.defaultHost}) {
-    hostName = hostName;
+  DSPServerModel(this.prefs) {
+    hostName = prefs.getString(HOSTNAME_SETTINGS_KEY) ?? ApiInfo.defaultHost;
+    currentSubmix = prefs.getInt(SUBMIX_SETTINGS_KEY) ?? currentSubmix;
+  }
+
+  void updateHostName(String host) {
+    hostName = host;
+    prefs.setString(HOSTNAME_SETTINGS_KEY, host);
+    notifyListeners();
   }
 
   void updateConnectionStatus(bool status) {
@@ -84,6 +93,7 @@ class DSPServerModel extends ChangeNotifier {
 
   void updateCurrentSubmix(int submix) {
     currentSubmix = submix;
+    prefs.setInt(SUBMIX_SETTINGS_KEY, submix);
     notifyListeners();
   }
 

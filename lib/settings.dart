@@ -1,5 +1,11 @@
 import 'models.dart';
 
+const String HOME_PAGE = 'home';
+const String SETTINGS_PAGE = 'settings';
+const String HOSTNAME_SETTINGS_KEY = 'hostname';
+const String SUBMIX_SETTINGS_KEY = 'submix';
+
+
 FaderGroupConfig getFaderGroupConfigMainPage(int groupId) {
   var groups = {
     0: FaderGroupConfig(name: 'default', faders: [
@@ -57,22 +63,22 @@ FaderGroupConfig getFaderGroupConfigMainPage(int groupId) {
 
   var resultGroup = groups[groupId];
   resultGroup ??= FaderGroupConfig(name: 'unknown group', faders: [
-      StereoFader(
-        name: 'Unknown Fader 1',
-        leftChannelid: '1',
-        rightChannelid: '2',
-      ),
-      StereoFader(
-        name: 'Unknown Fader 2',
-        leftChannelid: '3',
-        rightChannelid: '4',
-      ),
-      StereoFader(
-        name: 'Unknown Fader 3',
-        leftChannelid: '5',
-        rightChannelid: '6',
-      )
-    ]);
+    StereoFader(
+      name: 'Unknown Fader 1',
+      leftChannelid: '1',
+      rightChannelid: '2',
+    ),
+    StereoFader(
+      name: 'Unknown Fader 2',
+      leftChannelid: '3',
+      rightChannelid: '4',
+    ),
+    StereoFader(
+      name: 'Unknown Fader 3',
+      leftChannelid: '5',
+      rightChannelid: '6',
+    )
+  ]);
 
   return resultGroup;
 }
