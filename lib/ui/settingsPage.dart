@@ -5,6 +5,7 @@ import 'package:matrixmix/settings.dart';
 import 'package:provider/provider.dart';
 import 'package:string_validator/string_validator.dart';
 
+import '../services.dart';
 import 'common.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -18,6 +19,16 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   final _formKey = GlobalKey<FormState>();
+
+  void onCheckButtonPressed(DSPServerModel dspServer) async {
+    bool _connected = false;
+    try {
+      _connected = await DSPServerService().hello(dspServer.hostName);
+    } catch (e) {
+      _connected = false;
+    }
+    dspServer.updateConnectionStatus(_connected);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +76,13 @@ class _SettingsPageState extends State<SettingsPage> {
                                 dspServer.updateHostName(value);
                               }
                             }),
-                        // Add TextFormFields and ElevatedButton here.
+                        // button
+                        Container(
+                            padding: const EdgeInsets.symmetric(vertical: 20.0),
+                            child: ElevatedButton(
+                                onPressed: () =>
+                                    onCheckButtonPressed(dspServer),
+                                child: Text('Check'))),
                       ],
                     )))));
   }

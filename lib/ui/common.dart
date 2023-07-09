@@ -19,6 +19,6 @@ class _TitleTextWidgetState extends State<TitleTextWidget> {
   @override
   Widget build(BuildContext context) {
     var dspServer = context.watch<DSPServerModel>();
-    return Text('${widget.title} <${dspServer.isConnected ? '(connected)' : 'offline'}> ${dspServer.currentSubmix}');
+    return Text('${widget.title} <${dspServer.isConnected ? 'connected' : 'offline'}> ${dspServer.currentSubmix}');
   }
 }
