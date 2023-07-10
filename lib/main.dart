@@ -10,13 +10,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefences = await SharedPreferences.getInstance();
-
+  DSPServerModel dspServer = DSPServerModel(prefences);
   runApp(ChangeNotifierProvider(
-      create: (context) => DSPServerModel(prefences), child: const MyApp()));
+      create: (context) => dspServer, child: const MyApp()));
+  dspServer.connect();
 }
 
 GoRouter router() {
-  return GoRouter(initialLocation: '/settings', routes: [
+  return GoRouter(initialLocation: '/', routes: [
     GoRoute(
       path: '/',
       name: HOME_PAGE,

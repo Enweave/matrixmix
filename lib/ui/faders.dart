@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:matrixmix/models.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
+import 'package:throttled/throttled.dart';
 
 import '../settings.dart';
 
@@ -14,16 +16,16 @@ class FaderListWidget extends StatefulWidget {
 }
 
 class _FaderListWidgetState extends State<FaderListWidget> {
-  late final FaderGroupConfig _groupConfig;
-
-  @override
-  void initState() {
-    super.initState();
-    _groupConfig = getFaderGroupConfigMainPage(widget.faderGroupId);
+  void sendFaderValues(dspServer) {
+    throttle('dsp', dspServer.sendFaderValues,
+        cooldown: FADER_SEND_INTERVAL, leaky: true);
   }
 
-  Column buildFader(index) {
-    var faders = _groupConfig.faders[index];
+  Column buildFader(int index, DSPServerModel dspServer) {
+    var faders = dspServer.faderGroups[widget.faderGroupId]?.faders[index];
+    if (faders == null) {
+      return const Column(children: []);
+    }
     var columnChildren = [
       // bold text
       Container(
@@ -48,6 +50,7 @@ class _FaderListWidgetState extends State<FaderListWidget> {
             onChanged: (dynamic value) {
               setState(() {
                 faders.volumeFader.value = value.toInt();
+                sendFaderValues(dspServer);
               });
             },
           ))
@@ -68,6 +71,7 @@ class _FaderListWidgetState extends State<FaderListWidget> {
               onChanged: (dynamic value) {
                 setState(() {
                   faders.panFader.value = value.toInt();
+                  sendFaderValues(dspServer);
                 });
               },
             )),
@@ -75,6 +79,7 @@ class _FaderListWidgetState extends State<FaderListWidget> {
               onPressed: () {
                 setState(() {
                   faders.panFader.value = 0;
+                  sendFaderValues(dspServer);
                 });
               },
               child: const Text('C'),
@@ -92,9 +97,16 @@ class _FaderListWidgetState extends State<FaderListWidget> {
 
   @override
   Widget build(BuildContext context) {
+    var dspServer = context.watch<DSPServerModel>();
+
     var faderWidgets = <Widget>[];
-    for (var index = 0; index < _groupConfig.faders.length; index++) {
-      faderWidgets.add(buildFader(index));
+    List<StereoFader>? faders =
+        dspServer.faderGroups[widget.faderGroupId]?.faders;
+    if (faders == null) {
+      return const Text('No faders');
+    }
+    for (var index = 0; index < faders.length; index++) {
+      faderWidgets.add(buildFader(index, dspServer));
     }
 
     return Container(

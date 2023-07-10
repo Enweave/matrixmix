@@ -15,10 +15,31 @@ class TitleTextWidget extends StatefulWidget {
 }
 
 class _TitleTextWidgetState extends State<TitleTextWidget> {
-  // override build
+  void onCheckButtonPressed(DSPServerModel dspServer) async {
+    await dspServer.connect();
+  }
+
+  List<Widget> getConnectionPart(bool isConnected, DSPServerModel dspServer) {
+    List<Widget> children = [Text('${widget.title}: ')];
+    if (isConnected) {
+      children.add(
+          const Text('online', style: TextStyle(color: Colors.green)));
+    } else {
+      children.add(Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: ElevatedButton(
+              onPressed: () => onCheckButtonPressed(dspServer),
+              child: const Text('reconnect'))));
+    }
+    return children;
+  }
+
   @override
   Widget build(BuildContext context) {
     var dspServer = context.watch<DSPServerModel>();
-    return Text('${widget.title} <${dspServer.isConnected ? 'connected' : 'offline'}> ${dspServer.currentSubmix}');
+    return
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [...getConnectionPart(dspServer.isConnected, dspServer)]);
   }
 }

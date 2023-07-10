@@ -18,23 +18,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
-  // Future<http.Response> _fetchGet() {
-  //   return http.get(Uri.parse('http://192.168.4.1/hello'));
-  // }
-  //
-  // Future<FadersData> _getFadersData() async {
-  //   final response = await http.get(Uri.parse('http://192.168.4.1/faders'));
-  //   // parse the response
-  //   if (response.statusCode == 200) {
-  //     // If the server did return a 200 OK response, then parse the JSON.
-  //     final parsed = jsonDecode(response.body);
-  //     return FadersData.fromJson(parsed);
-  //   } else {
-  //     // If the server did not return a 200 OK response, then throw an exception.
-  //     throw Exception('Failed to load faders');
-  //   }
-  // }
-
   late TabController _tabController;
 
   @override

@@ -4,10 +4,10 @@ const String HOME_PAGE = 'home';
 const String SETTINGS_PAGE = 'settings';
 const String HOSTNAME_SETTINGS_KEY = 'hostname';
 const String SUBMIX_SETTINGS_KEY = 'submix';
+const Duration FADER_SEND_INTERVAL = Duration(milliseconds: 50);
 
-
-FaderGroupConfig getFaderGroupConfigMainPage(int groupId) {
-  var groups = {
+Map<int, FaderGroupConfig> getFaderGroupConfigs() {
+  return {
     0: FaderGroupConfig(name: 'default', faders: [
       StereoFader(
         name: 'Fader 1',
@@ -60,38 +60,22 @@ FaderGroupConfig getFaderGroupConfigMainPage(int groupId) {
       )
     ]),
   };
-
-  var resultGroup = groups[groupId];
-  resultGroup ??= FaderGroupConfig(name: 'unknown group', faders: [
-    StereoFader(
-      name: 'Unknown Fader 1',
-      leftChannelid: '1',
-      rightChannelid: '2',
-    ),
-    StereoFader(
-      name: 'Unknown Fader 2',
-      leftChannelid: '3',
-      rightChannelid: '4',
-    ),
-    StereoFader(
-      name: 'Unknown Fader 3',
-      leftChannelid: '5',
-      rightChannelid: '6',
-    )
-  ]);
-
-  return resultGroup;
 }
 
 class ApiInfo {
   static const String defaultHost = '192.168.1.53';
   static const String defaultScheme = 'http://';
-  static const String defaultPort = ':3000';
+  static const String defaultHttpPort = ':3000';
+  static const String defaultWebSocketPort = ':3001';
+
+  Uri getWsUrl({String host = defaultHost}) {
+    return Uri.parse('ws://$host$defaultWebSocketPort/ws');
+  }
 
   Uri getHelloUrl({String host = defaultHost}) {
-    return Uri.parse('$defaultScheme$host$defaultPort/hello');
+    return Uri.parse('$defaultScheme$host$defaultHttpPort/hello');
   }
   Uri getFadersUrl({String host = defaultHost}) {
-    return Uri.parse('$defaultScheme$host$defaultPort/faders');
+    return Uri.parse('$defaultScheme$host$defaultHttpPort/faders');
   }
 }
