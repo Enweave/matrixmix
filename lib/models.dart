@@ -75,7 +75,11 @@ class FaderGroupConfig {
 class DSPServerModel extends ChangeNotifier {
   SharedPreferences prefs;
   WebSocketChannel? channel = null;
-  String hostName = '';
+  String schemeHttp = 'http://';
+  String schemeWs = 'ws://';
+  int httpPort = 80;
+  int wsPort = 80;
+  String hostName = '192.168.1.53';
   bool isConnected = false;
   int currentSubmix = 0;
   Map<int, FaderGroupConfig> faderGroups = {};
@@ -85,8 +89,16 @@ class DSPServerModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Uri getHelloUrl() {
+    return Uri.parse('$schemeHttp$hostName:$httpPort/hello');
+  }
+  
+  Uri getWsUrl() {
+    return Uri.parse('$schemeWs$hostName:$wsPort');
+  }
+  
   Future connect() async {
-    final response = await http.get(ApiInfo().getHelloUrl(host: hostName));
+    final response = await http.get(getHelloUrl());
     if (response.statusCode == 200) {
       receiveFaderValues(jsonDecode(response.body));
     }
@@ -95,8 +107,7 @@ class DSPServerModel extends ChangeNotifier {
       channel!.sink.close();
     }
 
-    Uri url = ApiInfo().getWsUrl(host: hostName);
-    channel = WebSocketChannel.connect(url);
+    channel = WebSocketChannel.connect(getWsUrl());
     try {
       await channel?.ready;
       _updateConnectionStatus(true);
@@ -122,14 +133,28 @@ class DSPServerModel extends ChangeNotifier {
   }
 
   DSPServerModel(this.prefs) {
-    hostName = prefs.getString(HOSTNAME_SETTINGS_KEY) ?? ApiInfo.defaultHost;
+    hostName = prefs.getString(HOSTNAME_SETTINGS_KEY) ?? hostName;
     currentSubmix = prefs.getInt(SUBMIX_SETTINGS_KEY) ?? currentSubmix;
+    httpPort = prefs.getInt(HTTP_PORT_SETTINGS_KEY) ?? httpPort;
+    wsPort = prefs.getInt(WS_PORT_SETTINGS_KEY) ?? wsPort;
     faderGroups = getFaderGroupConfigs();
   }
 
   void updateHostName(String host) {
     hostName = host;
     prefs.setString(HOSTNAME_SETTINGS_KEY, host);
+    notifyListeners();
+  }
+
+  void updateHttpPort(int port) {
+    httpPort = port;
+    prefs.setInt(HTTP_PORT_SETTINGS_KEY, port);
+    notifyListeners();
+  }
+
+  void updateWsPort(int port) {
+    wsPort = port;
+    prefs.setInt(WS_PORT_SETTINGS_KEY, port);
     notifyListeners();
   }
 

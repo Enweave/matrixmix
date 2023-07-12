@@ -4,6 +4,8 @@ const String HOME_PAGE = 'home';
 const String SETTINGS_PAGE = 'settings';
 const String HOSTNAME_SETTINGS_KEY = 'hostname';
 const String SUBMIX_SETTINGS_KEY = 'submix';
+const String HTTP_PORT_SETTINGS_KEY = 'httpPort';
+const String WS_PORT_SETTINGS_KEY = 'wsPort';
 const Duration FADER_SEND_INTERVAL = Duration(milliseconds: 50);
 
 Map<int, FaderGroupConfig> getFaderGroupConfigs() {
@@ -60,22 +62,4 @@ Map<int, FaderGroupConfig> getFaderGroupConfigs() {
       )
     ]),
   };
-}
-
-class ApiInfo {
-  static const String defaultHost = '192.168.1.53';
-  static const String defaultScheme = 'http://';
-  static const String defaultHttpPort = ':3000';
-  static const String defaultWebSocketPort = ':3001';
-
-  Uri getWsUrl({String host = defaultHost}) {
-    return Uri.parse('ws://$host$defaultWebSocketPort/ws');
-  }
-
-  Uri getHelloUrl({String host = defaultHost}) {
-    return Uri.parse('$defaultScheme$host$defaultHttpPort/hello');
-  }
-  Uri getFadersUrl({String host = defaultHost}) {
-    return Uri.parse('$defaultScheme$host$defaultHttpPort/faders');
-  }
 }

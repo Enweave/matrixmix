@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrixmix/models.dart';
 import 'package:matrixmix/settings.dart';
@@ -64,6 +65,46 @@ class _SettingsPageState extends State<SettingsPage> {
                             onChanged: (value) {
                               if (_formKey.currentState!.validate()) {
                                 dspServer.updateHostName(value);
+                              }
+                            }),
+                        // input for httpPort
+                        TextFormField(
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                            decoration: const InputDecoration(
+                              label: Text('http port'),
+                              hintText: 'http port (80)',
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter port';
+                              }
+                              return null;
+                            },
+                            initialValue: dspServer.httpPort.toString(),
+                            onChanged: (value) {
+                              if (_formKey.currentState!.validate()) {
+                                dspServer.updateHttpPort(int.parse(value));
+                              }
+                            }),
+                        // input for wsPort
+                        TextFormField(
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                            decoration: const InputDecoration(
+                              label: Text('ws port'),
+                              hintText: 'ws port (80)',
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter port';
+                              }
+                              return null;
+                            },
+                            initialValue: dspServer.wsPort.toString(),
+                            onChanged: (value) {
+                              if (_formKey.currentState!.validate()) {
+                                dspServer.updateWsPort(int.parse(value));
                               }
                             }),
                         // button
