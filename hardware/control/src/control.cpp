@@ -1,8 +1,11 @@
+
+#include <Arduino.h>
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <WiFiAP.h>
 #include <ArduinoJson.h>
-#include <WebServer.h>
+#include <AsyncTCP.h>
+#include <ESPAsyncWebServer.h>
 #include "APMode.h"
 #include "ClientMode.h"
 #include "Web.h"
@@ -31,6 +34,5 @@ void setup() {
 }
 
 void loop() {
-    server.handleClient();
-    delay(2);
+//    ws.cleanupClients();
 }

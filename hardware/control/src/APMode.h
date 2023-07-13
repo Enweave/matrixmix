@@ -1,7 +1,7 @@
-#ifndef BT2SERIAL_APMODE_H
-#define BT2SERIAL_APMODE_H
+#ifndef CONTROL_APMODE_H
+#define CONTROL_APMODE_H
 
-#endif //BT2SERIAL_APMODE_H
+#endif //CONTROL_APMODE_H
 
 // Set these to your desired credentials.
 
