@@ -90,44 +90,66 @@ class DSPServerModel extends ChangeNotifier {
   }
 
   Uri getHelloUrl() {
+    // TODO: implement version check
     return Uri.parse('$schemeHttp$hostName:$httpPort/hello');
   }
-  
-  Uri getWsUrl() {
-    return Uri.parse('$schemeWs$hostName:$wsPort');
+
+  Uri getFadersUrl() {
+    return Uri.parse('$schemeHttp$hostName:$httpPort/faders');
   }
-  
-  Future connect() async {
-    final response = await http.get(getHelloUrl());
+
+  Uri getWsUrl() {
+    return Uri.parse('$schemeWs$hostName:$wsPort/ws');
+  }
+
+  Future<bool> fetchFadersData() async {
+    bool result = false;
+    final response = await http.get(getFadersUrl());
     if (response.statusCode == 200) {
-      receiveFaderValues(jsonDecode(response.body));
+      var json = jsonDecode(response.body);
+      if (json['faders'] != null) {
+        debugPrint('json $json');
+        updateFaderValues(json['faders']);
+        result = true;
+      }
     }
+    return result;
+  }
 
-    if (channel != null) {
-      channel!.sink.close();
-    }
-
-    channel = WebSocketChannel.connect(getWsUrl());
-    try {
-      await channel?.ready;
-      _updateConnectionStatus(true);
-      channel?.stream.listen(
-        (dynamic message) {
-          debugPrint('message $message');
-          receiveFaderValues(jsonDecode(message));
-        },
-        onDone: () {
-          _updateConnectionStatus(false);
-          debugPrint('ws channel closed');
-        },
-        onError: (error) {
-          _updateConnectionStatus(false);
-          debugPrint('ws error $error');
-        },
-      );
-    } catch (e) {
-      // log error
-      debugPrint('ws error $e');
+  Future connect() async {
+    bool fetch_success = await fetchFadersData();
+    if (fetch_success) {
+      if (channel != null) {
+        channel!.sink.close();
+      }
+      channel = WebSocketChannel.connect(getWsUrl());
+      try {
+        await channel?.ready;
+        _updateConnectionStatus(true);
+        channel?.stream.listen(
+          (dynamic message) {
+            debugPrint('message $message');
+            var json = jsonDecode(message);
+            if (json['faders'] != null) {
+              debugPrint('json $json');
+              updateFaderValues(json['faders']);
+            }
+          },
+          onDone: () {
+            _updateConnectionStatus(false);
+            debugPrint('ws channel closed');
+          },
+          onError: (error) {
+            _updateConnectionStatus(false);
+            debugPrint('ws error $error');
+          },
+        );
+      } catch (e) {
+        // log error
+        debugPrint('ws error $e');
+        _updateConnectionStatus(false);
+      }
+    } else {
       _updateConnectionStatus(false);
     }
   }
@@ -166,17 +188,19 @@ class DSPServerModel extends ChangeNotifier {
 
   void sendFaderValues() {
     Map<String, dynamic> data = {};
+    Map<String, dynamic> faders = {};
     if (isConnected) {
       faderGroups.forEach((key, group) {
         group.faders.forEach((fader) {
-          data.addAll(fader.valuesToJson());
+          faders.addAll(fader.valuesToJson());
         });
       });
+      data['faders'] = faders;
       channel?.sink.add(jsonEncode(data));
     }
   }
 
-  void receiveFaderValues(Map<String, dynamic> json) {
+  void updateFaderValues(Map<String, dynamic> json) {
     faderGroups.forEach((key, group) {
       group.faders.forEach((fader) {
         fader.valuesFromJson(json);
