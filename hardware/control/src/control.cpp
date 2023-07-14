@@ -34,5 +34,5 @@ void setup() {
 }
 
 void loop() {
-//    ws.cleanupClients();
+   ws.cleanupClients();
 }

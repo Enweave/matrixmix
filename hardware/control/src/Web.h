@@ -9,6 +9,12 @@ AsyncWebSocket ws("/ws");
 const uint8_t NUMBER_OF_FADERS = 36;
 uint8_t faderValues[NUMBER_OF_FADERS];
 
+
+String getHome() {
+    String output = "<!DOCTYPE html><html><head><base href=\"/\"><meta charset=\"UTF-8\"><meta content=\"IE=Edge\" http-equiv=\"X-UA-Compatible\"><meta name=\"description\" content=\"A new Flutter project.\"><meta name=\"apple-mobile-web-app-capable\" content=\"yes\"><meta name=\"apple-mobile-web-app-status-bar-style\" content=\"black\"><meta name=\"apple-mobile-web-app-title\" content=\"matrixmix\"><link rel=\"apple-touch-icon\" href=\"icons/Icon-192.png\"><link rel=\"icon\" type=\"image/png\" href=\"favicon.png\"><title>matrixmix</title><link rel=\"manifest\" href=\"manifest.json\"><script>var serviceWorkerVersion=\"2774205243\"</script><script src=\"https://enweave.github.io/matrixmix/flutter.js\" defer=\"defer\"></script></head><body><script>window.addEventListener(\"load\",function(n){_flutter.loader.loadEntrypoint({serviceWorker:{serviceWorkerVersion:serviceWorkerVersion},onEntrypointLoaded:function(n){n.initializeEngine().then(function(n){n.runApp()})}})})</script></body></html>";
+    return output;
+}
+
 // TODO: reply with version
 // void hello() {
 //     DynamicJsonDocument doc(1024);
@@ -159,7 +165,15 @@ void setupWeb() {
     server.on("/faders", HTTP_GET, [](AsyncWebServerRequest *request) {
         request->send(200, "application/json", getFaders());
     });
-    // server.on("/", HTTP_GET, hello);
+    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(200, "text/html", getHome());
+    });
+
+    // redirect all not found requests to another domain and append path
+    server.onNotFound([](AsyncWebServerRequest *request) {
+        request->redirect("https://enweave.github.io/matrixmix/" + request->url());
+    });
+
     server.begin();
     Serial.println("Server started");
 }
