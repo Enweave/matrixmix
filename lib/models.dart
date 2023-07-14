@@ -73,6 +73,22 @@ class FaderGroupConfig {
   }
 }
 
+class StatusModel {
+  String status;
+  StatusModel({this.status = 'unknown'}) {
+    status = status;
+  }
+
+  void fromJson(Map<String, dynamic> json) {
+    status = json['status'];
+  }
+
+  bool isOk() {
+    return status == 'ok';
+  }
+}
+
+
 class DSPServerModel extends ChangeNotifier {
   SharedPreferences prefs;
   WebSocketChannel? channel = null;
@@ -95,6 +111,10 @@ class DSPServerModel extends ChangeNotifier {
     return Uri.parse('$schemeHttp$hostName:$httpPort/hello');
   }
 
+  Uri getSaveUrl() {
+    return Uri.parse('$schemeHttp$hostName:$httpPort/save');
+  }
+
   Uri getFadersUrl() {
     return Uri.parse('$schemeHttp$hostName:$httpPort/faders');
   }
@@ -113,6 +133,17 @@ class DSPServerModel extends ChangeNotifier {
         updateFaderValues(json['faders']);
         result = true;
       }
+    }
+    return result;
+  }
+
+  Future<bool> sendSave() async {
+    bool result = false;
+    final response = await http.post(getSaveUrl());
+    if (response.statusCode == 200) {
+      var status = StatusModel();
+      status.fromJson(jsonDecode(response.body));
+      return status.isOk();
     }
     return result;
   }

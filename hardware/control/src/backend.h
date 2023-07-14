@@ -3,18 +3,27 @@
 #endif // BACKEND_H
 
 const uint8_t NUMBER_OF_FADERS = 36;
-uint8_t faderValues[NUMBER_OF_FADERS];
 const char *stateFileName = "/state.json";
+StaticJsonDocument<2048> stateDocument;
 
-const char *client_ssid = "your_kungfu_iz_good";
-const char *client_password = "plsl0gIN";
+uint8_t faderValues[NUMBER_OF_FADERS];
 
-const char *ap_ssid = "MatrixMixAP";
-const char *ap_password = "12345678";
+char *client_ssid = "your_kungfu_iz_good";
+char *client_password = "plsl0gIN";
+
+char *ap_ssid = "MatrixMixAP";
+char *ap_password = "12345678";
+
+bool SPIFFS_is_mounted = false;
+
+
+void sendTODSP()
+{
+    Serial.println("sending to DSP: ");
+}
 
 void loadFaderValues()
 {
-    StaticJsonDocument<2048> stateDocument;
     File stateFile;
     DeserializationError error;
     bool loadDefault = true;
@@ -30,7 +39,9 @@ void loadFaderValues()
         if (!error)
         {
             loadDefault = false;
+            SPIFFS_is_mounted = true;
         }
+
         stateFile.close();
     }
 
@@ -48,6 +59,8 @@ void loadFaderValues()
         Serial.println("Loaded state from file");
         // read values from the document
         JsonObject faders = stateDocument["faders"];
+        Serial.println(faders["0"].as<uint8_t>());
+
         // get number of elements in faders
         uint8_t numberOfFaders = faders.size();
         // iterate over key/value pairs in faders
@@ -62,16 +75,37 @@ void loadFaderValues()
         }
     }
 
-    
+    sendTODSP();
 }
 
-void sendTODSP()
-{
-    for (uint8_t faderId = 0; faderId < NUMBER_OF_FADERS; faderId++)
-    {
-        Serial.print("Fader ");
-        Serial.print(faderId);
-        Serial.print(": ");
-        Serial.println(faderValues[faderId]);
+bool storeFaderValues() {
+    String output = "";
+    size_t bytesWritten = 0;
+    if (SPIFFS_is_mounted) {
+        File stateFile;
+        DeserializationError error;
+
+        stateFile = SPIFFS.open(stateFileName, FILE_WRITE);
+        if (!stateFile) {
+            Serial.println("Failed to open file for writing");
+            return false;
+        }
+
+        // serialize the document
+        serializeJson(stateDocument, output);
+        // write the data to the file
+        bytesWritten = stateFile.print(output);
+        // check if the print operation was successful
+        stateFile.close();
+        if (bytesWritten == 0) {
+            Serial.println("Failed to write to file");
+            return false;
+        }
+        Serial.println("state saved");
+        return true;
+    } else {
+        return false;
     }
 }
+
+

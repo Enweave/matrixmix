@@ -46,7 +46,9 @@ void setFaders(String message)
         uint8_t faderValue = fader.value().as<uint8_t>();
         // set fader value
         faderValues[faderId.toInt()] = faderValue;
+        stateDocument["faders"][faderId] = faderValue;
     }
+    sendTODSP();
 }
 
 void notifyClients(uint32_t client_id_excluded)
@@ -162,6 +164,17 @@ void initWebSocket()
     server.addHandler(&ws);
 }
 
+
+String onSave()
+{
+    bool success = storeFaderValues();
+    if (!success)
+    {
+        return "{\"status\":\"error\"}";
+    }
+    return "{\"status\":\"ok\"}";
+}
+
 void setupWeb()
 {
     loadFaderValues();
@@ -170,6 +183,9 @@ void setupWeb()
               { request->send(200, "application/json", getFaders()); });
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
               { request->send(200, "text/html", getHome()); });
+
+    server.on("/save", HTTP_POST, [](AsyncWebServerRequest *request)
+              { request->send(200, "application/json", onSave()); });
 
     // redirect all not found requests to another domain and append path
     server.onNotFound([](AsyncWebServerRequest *request)
