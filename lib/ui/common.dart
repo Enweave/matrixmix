@@ -29,7 +29,7 @@ class _TitleTextWidgetState extends State<TitleTextWidget> {
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: ElevatedButton(
               onPressed: () => onCheckButtonPressed(dspServer),
-              child: const Text('reconnect'))));
+              child: const Text('connect'))));
     }
     return children;
   }

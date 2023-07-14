@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:matrixmix/settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -155,7 +156,11 @@ class DSPServerModel extends ChangeNotifier {
   }
 
   DSPServerModel(this.prefs) {
-    hostName = prefs.getString(HOSTNAME_SETTINGS_KEY) ?? hostName;
+    if (kIsWeb) {
+      hostName = Uri.base.host;
+    } else {
+      hostName = prefs.getString(HOSTNAME_SETTINGS_KEY) ?? hostName;
+    }
     currentSubmix = prefs.getInt(SUBMIX_SETTINGS_KEY) ?? currentSubmix;
     httpPort = prefs.getInt(HTTP_PORT_SETTINGS_KEY) ?? httpPort;
     wsPort = prefs.getInt(WS_PORT_SETTINGS_KEY) ?? wsPort;

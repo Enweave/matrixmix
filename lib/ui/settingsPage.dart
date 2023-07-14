@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -20,6 +21,96 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   final _formKey = GlobalKey<FormState>();
 
+  void onCheckButtonPressed(DSPServerModel dspServer) async {
+    await dspServer.connect();
+  }
+
+  List<Widget> getFormChildren(DSPServerModel dspServer) {
+    bool isEnabled = !kIsWeb;
+    List<Widget> children = <Widget>[
+      // Input for hostName
+      TextFormField(
+          enabled: isEnabled,
+          decoration: const InputDecoration(
+            label: Text('Hostname'),
+            hintText: 'IP or domain',
+          ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter the hostname';
+            }
+
+            if (value == 'localhost') {
+              return null;
+            }
+
+            if (!isIP(value) && !isFQDN(value)) {
+              return 'Please enter a valid IP address or hostname';
+            }
+            return null;
+          },
+          initialValue: dspServer.hostName,
+          onChanged: (value) {
+            if (_formKey.currentState!.validate()) {
+              dspServer.updateHostName(value);
+            }
+          }),
+      // input for httpPort
+      TextFormField(
+          keyboardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          decoration: const InputDecoration(
+            label: Text('http port'),
+            hintText: 'http port (80)',
+          ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter port';
+            }
+            return null;
+          },
+          initialValue: dspServer.httpPort.toString(),
+          onChanged: (value) {
+            if (_formKey.currentState!.validate()) {
+              dspServer.updateHttpPort(int.parse(value));
+            }
+          }),
+      // input for wsPort
+      TextFormField(
+          keyboardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          decoration: const InputDecoration(
+            label: Text('ws port'),
+            hintText: 'ws port (80)',
+          ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter port';
+            }
+            return null;
+          },
+          initialValue: dspServer.wsPort.toString(),
+          onChanged: (value) {
+            if (_formKey.currentState!.validate()) {
+              dspServer.updateWsPort(int.parse(value));
+            }
+          }),
+    ];
+
+    if (kIsWeb) {
+      children.add(Container(
+          padding: const EdgeInsets.symmetric(vertical: 20.0),
+          child: const Text('Web version does not support changing host')));
+    }
+
+    children.add(Container(
+        padding: const EdgeInsets.symmetric(vertical: 20.0),
+        child: ElevatedButton(
+            onPressed: () => onCheckButtonPressed(dspServer),
+            child: const Text('reconnect'))));
+
+    return children;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,72 +134,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 child: Form(
                     key: _formKey,
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        // Input for hostName
-                        TextFormField(
-                            decoration: const InputDecoration(
-                              label: Text('Hostname'),
-                              hintText: 'IP or domain',
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter the hostname';
-                              }
-                              // test value to be IP address or a hostname
-                              if (!isIP(value) && !isFQDN(value)) {
-                                return 'Please enter a valid IP address or hostname';
-                              }
-                              return null;
-                            },
-                            initialValue: dspServer.hostName,
-                            onChanged: (value) {
-                              if (_formKey.currentState!.validate()) {
-                                dspServer.updateHostName(value);
-                              }
-                            }),
-                        // input for httpPort
-                        TextFormField(
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                            decoration: const InputDecoration(
-                              label: Text('http port'),
-                              hintText: 'http port (80)',
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter port';
-                              }
-                              return null;
-                            },
-                            initialValue: dspServer.httpPort.toString(),
-                            onChanged: (value) {
-                              if (_formKey.currentState!.validate()) {
-                                dspServer.updateHttpPort(int.parse(value));
-                              }
-                            }),
-                        // input for wsPort
-                        TextFormField(
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                            decoration: const InputDecoration(
-                              label: Text('ws port'),
-                              hintText: 'ws port (80)',
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter port';
-                              }
-                              return null;
-                            },
-                            initialValue: dspServer.wsPort.toString(),
-                            onChanged: (value) {
-                              if (_formKey.currentState!.validate()) {
-                                dspServer.updateWsPort(int.parse(value));
-                              }
-                            }),
-                        // button
-                      ],
-                    )))));
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: getFormChildren(dspServer))))));
   }
 }
