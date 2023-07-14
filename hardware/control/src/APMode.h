@@ -6,9 +6,8 @@
 // Set these to your desired credentials.
 
 void startAp() {
-    const char *ssid = "MatrixMixAP";
-    const char *password = "12345678";
-    WiFi.softAP(ssid, password);
+
+    WiFi.softAP(ap_ssid, ap_password);
     IPAddress myIP = WiFi.softAPIP();
     Serial.print("AP IP address: ");
     Serial.println(myIP);

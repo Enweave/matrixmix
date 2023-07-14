@@ -1,0 +1,10 @@
+{
+  "default_wifi_ap": {
+    "ssid": "MatrixMixAP",
+    "password": "12345678"
+  },
+  "default_wifi_client": {
+    "ssid": "your_kungfu_iz_good",
+    "password": "plsl0gIN"
+  }
+}

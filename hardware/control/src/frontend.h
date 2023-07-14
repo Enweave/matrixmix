@@ -1,13 +1,11 @@
-#ifndef CONTROL_WEB_H
-#define CONTROL_WEB_H
+#ifndef FRONTEND_H
+#define FRONTEND_H
 
-#endif // CONTROL_WEB_H
+#endif // FRONTEND_H
 
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
 
-const uint8_t NUMBER_OF_FADERS = 36;
-uint8_t faderValues[NUMBER_OF_FADERS];
 
 String getHome()
 {
@@ -15,22 +13,6 @@ String getHome()
     return output;
 }
 
-// TODO: reply with version
-// void hello() {
-//     DynamicJsonDocument doc(1024);
-//     doc["ver"] = "1";
-//     String output = "";
-//     serializeJson(doc, output);
-//     server.send(200, "application/json", output);
-// }
-
-void loadFaderValues()
-{
-    for (uint8_t faderId = 0; faderId < NUMBER_OF_FADERS; faderId++)
-    {
-        faderValues[faderId] = 123;
-    }
-}
 
 String getFaders()
 {

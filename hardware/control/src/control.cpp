@@ -6,9 +6,11 @@
 #include <ArduinoJson.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
+#include "SPIFFS.h"
+#include "backend.h"
 #include "APMode.h"
 #include "ClientMode.h"
-#include "Web.h"
+#include "frontend.h"
 
 #define MODE_SWITCH 4
 

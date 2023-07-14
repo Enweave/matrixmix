@@ -5,9 +5,8 @@
 
 
 void startClient() {
-    const char *ssid = "your_kungfu_iz_good";
-    const char *password = "plsl0gIN";
-    WiFi.begin(ssid, password);
+
+    WiFi.begin(client_ssid, client_password);
     Serial.print("Connecting");
     while (WiFi.status() != WL_CONNECTED) {
         delay(500);
