@@ -128,13 +128,13 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
           ],
         ),
-        body: Center(
-            child: Container(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-                child: Form(
-                    key: _formKey,
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: getFormChildren(dspServer))))));
+        body: SingleChildScrollView(
+                child: Container(
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+                    child: Form(
+                        key: _formKey,
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: getFormChildren(dspServer))))));
   }
 }

@@ -192,9 +192,9 @@ class DSPServerModel extends ChangeNotifier {
   }
 
   void sendFaderValues() {
-    Map<String, dynamic> data = {};
-    Map<String, dynamic> faders = {};
     if (isConnected) {
+      Map<String, dynamic> data = {};
+      Map<String, dynamic> faders = {};
       faderGroups.forEach((key, group) {
         group.faders.forEach((fader) {
           faders.addAll(fader.valuesToJson());

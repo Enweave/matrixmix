@@ -110,13 +110,10 @@ class _FaderListWidgetState extends State<FaderListWidget> {
     }
 
     return Container(
-        padding: const EdgeInsets.all(8.0),
-        height: 400,
-        child: Container(
-            padding: const EdgeInsets.only(top: 50),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: faderWidgets,
-            )));
+        padding: const EdgeInsets.fromLTRB(8, 50, 8, 50),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: faderWidgets,
+        ));
   }
 }
