@@ -1,6 +1,14 @@
 #ifndef BACKEND_H
 #define BACKEND_H
-#endif // BACKEND_H
+#define DSP_I2C_ADDR 0b0110100
+#include <Wire.h>
+#include <Arduino.h>
+#include <pgmspace.h>
+#include "VolTables.h"
+
+#define safeload_addr_addr 0x815 
+#define safeload_addr_data 0x810 
+#define safeload_addr_capture 0x81C 
 
 const uint8_t NUMBER_OF_FADERS = 36;
 const char *stateFileName = "/state.json";
@@ -17,9 +25,48 @@ char *ap_password = "12345678";
 bool SPIFFS_is_mounted = false;
 
 
+void dspWrite2b(uint16_t address, uint16_t data)
+{
+    Wire.beginTransmission(DSP_I2C_ADDR);
+    Wire.write(address >> 8);  
+    Wire.write(address & 0xff);
+    Wire.write(data >> 8);
+    Wire.write(data & 0xff);
+    Wire.endTransmission();
+}
+
+void dspWrite4b(uint16_t address, uint32_t data)
+{
+    Wire.beginTransmission(DSP_I2C_ADDR);
+    Wire.write(address >> 8);
+    Wire.write(address & 0xff);
+    Wire.write((data >> 24) & 0xFF);
+    Wire.write((data >> 16) & 0xFF);
+    Wire.write((data >> 8) & 0xFF);
+    Wire.write(data & 0xFF);
+
+    Wire.endTransmission();
+}
+
+void send_volume_to_dsp(uint32_t paramAddress, uint8_t volumeIndex) {
+    dspWrite2b(safeload_addr_addr, paramAddress);
+    uint32_t num;
+
+    for(byte i = 0; i < 4; i++) {
+        num<<=8;
+        num |= pgm_read_byte(&Volume[i+(volumeIndex<<2)]);
+    }
+    
+    dspWrite4b(safeload_addr_data, num);
+    dspWrite4b(safeload_addr_capture, 0x00000001);
+}
+
 void sendTODSP()
 {
-    Serial.println("sending to DSP: ");
+    for (uint8_t faderId = 0; faderId < NUMBER_OF_FADERS; faderId++)
+    {
+        send_volume_to_dsp(faderId, faderValues[faderId]);
+    }
 }
 
 void loadFaderValues()
@@ -58,8 +105,7 @@ void loadFaderValues()
     {
         Serial.println("Loaded state from file");
         // read values from the document
-        JsonObject faders = stateDocument["faders"];
-        Serial.println(faders["0"].as<uint8_t>());
+        JsonObject faders = stateDocument[FADERS_KEY];
 
         // get number of elements in faders
         uint8_t numberOfFaders = faders.size();
@@ -108,4 +154,4 @@ bool storeFaderValues() {
     }
 }
 
-
+#endif // BACKEND_H

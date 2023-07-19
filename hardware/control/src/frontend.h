@@ -1,7 +1,6 @@
 #ifndef FRONTEND_H
 #define FRONTEND_H
 
-#endif // FRONTEND_H
 
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
@@ -17,7 +16,7 @@ String getHome()
 String getFaders()
 {
     DynamicJsonDocument doc(1024);
-    JsonObject faders = doc.createNestedObject("faders");
+    JsonObject faders = doc.createNestedObject(FADERS_KEY);
     for (uint8_t faderId = 0; faderId < NUMBER_OF_FADERS; faderId++)
     {
         faders[String(faderId)] = faderValues[faderId];
@@ -34,7 +33,7 @@ void setFaders(String message)
 
     DynamicJsonDocument doc(1024);
     deserializeJson(doc, message);
-    JsonObject faders = doc["faders"];
+    JsonObject faders = doc[FADERS_KEY];
     // get number of elements in faders
     uint8_t numberOfFaders = faders.size();
     // iterate over key/value pairs in faders
@@ -46,7 +45,7 @@ void setFaders(String message)
         uint8_t faderValue = fader.value().as<uint8_t>();
         // set fader value
         faderValues[faderId.toInt()] = faderValue;
-        stateDocument["faders"][faderId] = faderValue;
+        stateDocument[FADERS_KEY][faderId] = faderValue;
     }
     sendTODSP();
 }
@@ -194,3 +193,5 @@ void setupWeb()
     server.begin();
     Serial.println("Server started");
 }
+
+#endif // FRONTEND_H

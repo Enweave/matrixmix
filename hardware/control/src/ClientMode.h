@@ -1,8 +1,6 @@
 #ifndef CONTROL_CLIENTMODE_H
 #define CONTROL_CLIENTMODE_H
 
-#endif //CONTROL_CLIENTMODE_H
-
 
 void startClient() {
 
@@ -24,3 +22,5 @@ void startClient() {
         delay(100);
     }
 }
+
+#endif //CONTROL_CLIENTMODE_H

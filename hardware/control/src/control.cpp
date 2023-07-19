@@ -7,14 +7,22 @@
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include "SPIFFS.h"
+
+#define FADERS_KEY "faders"
+
 #include "backend.h"
 #include "APMode.h"
 #include "ClientMode.h"
 #include "frontend.h"
-
+#include <Wire.h>
+#define I2C_SPEED 400000L      // ограничиваем скорость шины, а то успеет
 #define MODE_SWITCH 4
 
+
+
 void setup() {
+    Wire.begin(); // пины можно не указывать, у esp32 один апаратный i2с и ножки развел на дефолтные пины а не на альтернативные
+    Wire.setClock(I2C_SPEED);
     pinMode(LED_BUILTIN, OUTPUT);
 
     Serial.begin(115200);
