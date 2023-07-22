@@ -9,6 +9,8 @@
 #include "SPIFFS.h"
 
 #define FADERS_KEY "faders"
+#define AP_KEY "wifi_ap"
+#define CLIENT_KEY "wifi_client"
 
 #include "backend.h"
 #include "APMode.h"
@@ -28,7 +30,7 @@ void setup() {
     Serial.begin(115200);
     Serial.println();
     Serial.println("Starting services...");
-
+    loadFaderValues();
     pinMode(MODE_SWITCH, INPUT_PULLUP);
     bool isOn = digitalRead(MODE_SWITCH);
     if (isOn) {

@@ -16,11 +16,11 @@ StaticJsonDocument<2048> stateDocument;
 
 uint8_t faderValues[NUMBER_OF_FADERS];
 
-char *client_ssid = "your_kungfu_iz_good";
-char *client_password = "plsl0gIN";
+const char *client_ssid = "MatrixMixAP";
+const char *client_password = "12345678";
 
-char *ap_ssid = "MatrixMixAP";
-char *ap_password = "12345678";
+const char *ap_ssid = "MatrixMixAP";
+const char *ap_password = "12345678";
 
 bool SPIFFS_is_mounted = false;
 
@@ -107,6 +107,17 @@ void loadFaderValues()
         // read values from the document
         JsonObject faders = stateDocument[FADERS_KEY];
 
+        JsonObject json_ap = stateDocument[AP_KEY];
+        JsonObject json_client = stateDocument[CLIENT_KEY];
+
+        
+        client_ssid = json_client["ssid"].as<const char*>();
+        client_password = json_client["password"].as<const char*>();
+    
+        // client_password = client[String("password")];
+        // ap_ssid = ap["ssid"];
+        // ap_password = ap["password"];
+        
         // get number of elements in faders
         uint8_t numberOfFaders = faders.size();
         // iterate over key/value pairs in faders

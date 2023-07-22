@@ -176,7 +176,6 @@ String onSave()
 
 void setupWeb()
 {
-    loadFaderValues();
     initWebSocket();
     server.on("/faders", HTTP_GET, [](AsyncWebServerRequest *request)
               { request->send(200, "application/json", getFaders()); });

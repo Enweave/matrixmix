@@ -5,7 +5,7 @@
 void startClient() {
 
     WiFi.begin(client_ssid, client_password);
-    Serial.print("Connecting");
+    Serial.printf("Connecting to %s with %s", client_ssid, client_password);
     while (WiFi.status() != WL_CONNECTED) {
         delay(500);
         Serial.print(".");
