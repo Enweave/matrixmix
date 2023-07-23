@@ -13,52 +13,52 @@ Map<int, FaderGroupConfig> getFaderGroupConfigs() {
     0: FaderGroupConfig(name: '1', faders: [
       StereoFader(
         name: 'Fader 1',
-        leftChannelid: '1',
-        rightChannelid: '6',
+        leftChannelid: '0',
+        rightChannelid: '7',
       ),
       StereoFader(
         name: 'Fader 2',
-        leftChannelid: '3',
-        rightChannelid: '8',
+        leftChannelid: '2',
+        rightChannelid: '9',
       ),
       StereoFader(
         name: 'Fader 3',
-        leftChannelid: '5',
-        rightChannelid: '10',
+        leftChannelid: '4',
+        rightChannelid: '11',
       )
     ]),
     1: FaderGroupConfig(name: '2', faders: [
       StereoFader(
         name: 'Fader 4',
-        leftChannelid: '31',
-        rightChannelid: '24',
+        leftChannelid: '30',
+        rightChannelid: '25',
       ),
       StereoFader(
         name: 'Fader 5',
-        leftChannelid: '33',
-        rightChannelid: '26',
+        leftChannelid: '32',
+        rightChannelid: '27',
       ),
       StereoFader(
         name: 'Fader 6',
-        leftChannelid: '35',
-        rightChannelid: '28',
+        leftChannelid: '34',
+        rightChannelid: '29',
       )
     ]),
     2: FaderGroupConfig(name: '3', faders: [
       StereoFader(
         name: 'Fader 7',
-        leftChannelid: '13',
-        rightChannelid: '18',
+        leftChannelid: '12',
+        rightChannelid: '19',
       ),
       StereoFader(
-        name: 'Fader 8', //ok
-        leftChannelid: '15',
-        rightChannelid: '20',
+        name: 'Fader 8',
+        leftChannelid: '14',
+        rightChannelid: '21',
       ),
       StereoFader(
         name: 'Fader 9',
-        leftChannelid: '17',
-        rightChannelid: '22',
+        leftChannelid: '16',
+        rightChannelid: '23',
       )
     ]),
   };
