@@ -32,6 +32,22 @@ class _HomePageState extends State<HomePage>
     super.dispose();
   }
 
+  List<Tab> getTabs(DSPServerModel dspServer) {
+    List<Tab> tabs = [];
+    dspServer.faderGroups.forEach((key, value) {
+      tabs.add(Tab(text: value.name));
+    });
+    return tabs;
+  }
+
+  List<FaderListWidget> getFaderListWidgets(DSPServerModel dspServer) {
+    List<FaderListWidget> groups = [];
+    dspServer.faderGroups.forEach((key, value) {
+      groups.add(FaderListWidget(faderGroupId: key));
+    });
+    return groups;
+  }
+
   @override
   Widget build(BuildContext context) {
     var dspServer = context.watch<DSPServerModel>();
@@ -40,30 +56,23 @@ class _HomePageState extends State<HomePage>
       dspServer.updateCurrentSubmix(_tabController.index.toInt());
     });
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: TitleTextWidget(title: widget.title),
-        bottom: TabBar(controller: _tabController, tabs: const [
-          Tab(text: 'Main'),
-          Tab(text: 'Group 1'),
-          Tab(text: 'Group 2'),
-        ]),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              // go to settings route
-              context.goNamed(SETTINGS_PAGE);
-            },
-          ),
-        ],
-      ),
-      body: Center(
-          child: TabBarView(controller: _tabController, children: const [
-        FaderListWidget(faderGroupId: 0),
-        FaderListWidget(faderGroupId: 1),
-        FaderListWidget(faderGroupId: 2),
-      ])),
-    );
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: TitleTextWidget(title: widget.title),
+          bottom: TabBar(controller: _tabController, tabs: getTabs(dspServer)),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.settings),
+              onPressed: () {
+                // go to settings route
+                context.goNamed(SETTINGS_PAGE);
+              },
+            ),
+          ],
+        ),
+        body: Center(
+            child: TabBarView(
+                controller: _tabController,
+                children: getFaderListWidgets(dspServer))));
   }
 }
