@@ -16,9 +16,9 @@ void startClient() {
 
     // blink led to indicate connection
     for (int i = 0; i < 3; i++) {
-        digitalWrite(LED_BUILTIN, HIGH);
+        digitalWrite(STATUS_LED, HIGH);
         delay(100);
-        digitalWrite(LED_BUILTIN, LOW);
+        digitalWrite(STATUS_LED, LOW);
         delay(100);
     }
 }

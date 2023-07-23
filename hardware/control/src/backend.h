@@ -1,14 +1,15 @@
 #ifndef BACKEND_H
 #define BACKEND_H
-#define DSP_I2C_ADDR 0b0110100
+// #define DSP_I2C_ADDR 0b0110100
+#define DSP_I2C_ADDR (0x68 >> 1) & 0xFE
 #include <Wire.h>
 #include <Arduino.h>
 #include <pgmspace.h>
 #include "VolTables.h"
 
-#define safeload_addr_addr 0x815 
-#define safeload_addr_data 0x810 
-#define safeload_addr_capture 0x81C 
+#define safeload_addr_addr 0x0815 
+#define safeload_addr_data 0x0810 
+#define dsp_core_control 0x081C 
 
 const uint8_t NUMBER_OF_FADERS = 36;
 const char *stateFileName = "/state.json";
@@ -48,7 +49,7 @@ void dspWrite4b(uint16_t address, uint32_t data)
     Wire.endTransmission();
 }
 
-void send_volume_to_dsp(uint32_t paramAddress, uint8_t volumeIndex) {
+void send_volume_to_dsp_safeload(uint32_t paramAddress, uint8_t volumeIndex) {
     dspWrite2b(safeload_addr_addr, paramAddress);
     uint32_t num;
 
@@ -58,11 +59,23 @@ void send_volume_to_dsp(uint32_t paramAddress, uint8_t volumeIndex) {
     }
     
     dspWrite4b(safeload_addr_data, num);
-    dspWrite4b(safeload_addr_capture, 0x00000001);
+    dspWrite2b(dsp_core_control, 0x0020);
+}
+
+void send_volume_to_dsp(uint8_t paramAddress, uint8_t volumeIndex) {
+    uint32_t num;
+
+    for(byte i = 0; i < 4; i++) {
+        num<<=8;
+        num |= pgm_read_byte(&Volume[i+(volumeIndex<<2)]);
+    }
+    
+    dspWrite4b(paramAddress, num);
 }
 
 void sendTODSP()
 {
+    Serial.println(faderValues[0]);
     for (uint8_t faderId = 0; faderId < NUMBER_OF_FADERS; faderId++)
     {
         send_volume_to_dsp(faderId, faderValues[faderId]);
@@ -113,11 +126,9 @@ void loadFaderValues()
         
         client_ssid = json_client["ssid"].as<const char*>();
         client_password = json_client["password"].as<const char*>();
-    
-        // client_password = client[String("password")];
-        // ap_ssid = ap["ssid"];
-        // ap_password = ap["password"];
-        
+        ap_ssid = json_ap["ssid"].as<const char*>();
+        ap_password = json_ap["password"].as<const char*>();
+
         // get number of elements in faders
         uint8_t numberOfFaders = faders.size();
         // iterate over key/value pairs in faders
