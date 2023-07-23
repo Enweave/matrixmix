@@ -10,55 +10,55 @@ const Duration FADER_SEND_INTERVAL = Duration(milliseconds: 50);
 
 Map<int, FaderGroupConfig> getFaderGroupConfigs() {
   return {
-    0: FaderGroupConfig(name: 'default', faders: [
+    0: FaderGroupConfig(name: '1', faders: [
       StereoFader(
         name: 'Fader 1',
-        leftChannelid: '0',
-        rightChannelid: '1',
+        leftChannelid: '1',
+        rightChannelid: '6',
       ),
       StereoFader(
         name: 'Fader 2',
-        leftChannelid: '2',
-        rightChannelid: '3',
+        leftChannelid: '3',
+        rightChannelid: '8',
       ),
       StereoFader(
         name: 'Fader 3',
-        leftChannelid: '4',
-        rightChannelid: '5',
+        leftChannelid: '5',
+        rightChannelid: '10',
       )
     ]),
-    1: FaderGroupConfig(name: 'default 2', faders: [
+    1: FaderGroupConfig(name: '2', faders: [
       StereoFader(
         name: 'Fader 4',
-        leftChannelid: '6',
-        rightChannelid: '7',
+        leftChannelid: '31',
+        rightChannelid: '24',
       ),
       StereoFader(
         name: 'Fader 5',
-        leftChannelid: '8',
-        rightChannelid: '9',
+        leftChannelid: '33',
+        rightChannelid: '26',
       ),
       StereoFader(
         name: 'Fader 6',
-        leftChannelid: '10',
-        rightChannelid: '11',
+        leftChannelid: '35',
+        rightChannelid: '28',
       )
     ]),
-    2: FaderGroupConfig(name: 'default 3', faders: [
+    2: FaderGroupConfig(name: '3', faders: [
       StereoFader(
         name: 'Fader 7',
-        leftChannelid: '12',
-        rightChannelid: '13',
+        leftChannelid: '13',
+        rightChannelid: '18',
       ),
       StereoFader(
-        name: 'Fader 8',
-        leftChannelid: '14',
-        rightChannelid: '15',
+        name: 'Fader 8', //ok
+        leftChannelid: '15',
+        rightChannelid: '20',
       ),
       StereoFader(
         name: 'Fader 9',
-        leftChannelid: '16',
-        rightChannelid: '17',
+        leftChannelid: '17',
+        rightChannelid: '22',
       )
     ]),
   };

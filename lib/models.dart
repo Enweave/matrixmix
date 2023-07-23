@@ -130,7 +130,7 @@ class DSPServerModel extends ChangeNotifier {
       var json = jsonDecode(response.body);
       if (json['faders'] != null) {
         debugPrint('json $json');
-        updateFaderValues(json['faders']);
+        receiveFaderValues(json['faders']);
         result = true;
       }
     }
@@ -164,7 +164,7 @@ class DSPServerModel extends ChangeNotifier {
             var json = jsonDecode(message);
             if (json['faders'] != null) {
               debugPrint('json $json');
-              updateFaderValues(json['faders']);
+              receiveFaderValues(json['faders']);
             }
           },
           onDone: () {
@@ -236,7 +236,7 @@ class DSPServerModel extends ChangeNotifier {
     }
   }
 
-  void updateFaderValues(Map<String, dynamic> json) {
+  void receiveFaderValues(Map<String, dynamic> json) {
     faderGroups.forEach((key, group) {
       group.faders.forEach((fader) {
         fader.valuesFromJson(json);
