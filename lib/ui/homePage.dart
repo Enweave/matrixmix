@@ -23,7 +23,8 @@ class _HomePageState extends State<HomePage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: 3, initialIndex: 0);
+    int length = context.read<DSPServerModel>().faderGroups.length;
+    _tabController = TabController(vsync: this, length: length, initialIndex: 0);
   }
 
   @override
