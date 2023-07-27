@@ -20,11 +20,37 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
+  bool _saveSuccess = false;
+
+  void onSaveButtonPressed(DSPServerModel dspServer) async {
+    _saveSuccess = await dspServer.sendSave();
+    // show dialog with result
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Save result'),
+            content: Text(_saveSuccess
+                ? 'Save successful'
+                : 'Save failed. Please check your settings'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        });
+  }
+
   @override
   void initState() {
     super.initState();
     int length = context.read<DSPServerModel>().faderGroups.length;
-    _tabController = TabController(vsync: this, length: length, initialIndex: 0);
+    _tabController =
+        TabController(vsync: this, length: length, initialIndex: 0);
   }
 
   @override
@@ -72,8 +98,16 @@ class _HomePageState extends State<HomePage>
           ],
         ),
         body: Center(
-            child: TabBarView(
-                controller: _tabController,
-                children: getFaderListWidgets(dspServer))));
+            child: Column(children: <Widget>[
+          Expanded(
+              child: TabBarView(
+                  controller: _tabController,
+                  children: getFaderListWidgets(dspServer))),
+          Container(
+              padding: const EdgeInsets.fromLTRB(10, 0, 10, 20),
+              child: ElevatedButton(
+                  onPressed: () => onSaveButtonPressed(dspServer),
+                  child: const Text('Save'))),
+        ])));
   }
 }

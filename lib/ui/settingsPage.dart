@@ -20,33 +20,9 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   final _formKey = GlobalKey<FormState>();
-  bool _saveSuccess = false;
 
   void onCheckButtonPressed(DSPServerModel dspServer) async {
     await dspServer.connect();
-  }
-
-  void onSaveButtonPressed(DSPServerModel dspServer) async {
-    _saveSuccess = await dspServer.sendSave();
-    // show dialog with result
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Save result'),
-            content: Text(_saveSuccess
-                ? 'Save successful'
-                : 'Save failed. Please check your settings'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          );
-        });
   }
 
   List<Widget> getFormChildren(DSPServerModel dspServer) {
@@ -132,12 +108,6 @@ class _SettingsPageState extends State<SettingsPage> {
         child: ElevatedButton(
             onPressed: () => onCheckButtonPressed(dspServer),
             child: const Text('reconnect'))));
-
-    children.add(Container(
-        padding: const EdgeInsets.symmetric(vertical: 20.0),
-        child: MaterialButton(
-            onPressed: () => onSaveButtonPressed(dspServer),
-            child: const Text('save'))));
 
     return children;
   }
