@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
       title: 'MatrixMix',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-            seedColor: Color(0xFF2D7072), brightness: Brightness.dark),
+            seedColor: Color(0xFF00BCD4), brightness: Brightness.dark),
         // dark theme
         useMaterial3: true,
       ),
