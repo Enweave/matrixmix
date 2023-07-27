@@ -7,6 +7,7 @@ const String SUBMIX_SETTINGS_KEY = 'submix';
 const String HTTP_PORT_SETTINGS_KEY = 'httpPort';
 const String WS_PORT_SETTINGS_KEY = 'wsPort';
 const Duration FADER_SEND_INTERVAL = Duration(milliseconds: 50);
+const Duration WS_CONNECTION_TIMEOUT = Duration(seconds: 2);
 
 Map<int, FaderGroupConfig> getFaderGroupConfigs() {
   return {

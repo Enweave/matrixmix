@@ -1,10 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:matrixmix/settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:web_socket_channel/io.dart';
 import 'package:http/http.dart' as http;
 
 class FaderBase {
@@ -91,7 +92,7 @@ class StatusModel {
 
 class DSPServerModel extends ChangeNotifier {
   SharedPreferences prefs;
-  WebSocketChannel? channel = null;
+  IOWebSocketChannel? channel = null;
   String schemeHttp = 'http://';
   String schemeWs = 'ws://';
   int httpPort = 80;
@@ -125,25 +126,33 @@ class DSPServerModel extends ChangeNotifier {
 
   Future<bool> fetchFadersData() async {
     bool result = false;
-    final response = await http.get(getFadersUrl());
-    if (response.statusCode == 200) {
-      var json = jsonDecode(response.body);
-      if (json['faders'] != null) {
-        debugPrint('json $json');
-        receiveFaderValues(json['faders']);
-        result = true;
+    try {
+      final response = await http.get(getFadersUrl());
+      if (response.statusCode == 200) {
+        var json = jsonDecode(response.body);
+        if (json['faders'] != null) {
+          debugPrint('json $json');
+          receiveFaderValues(json['faders']);
+          result = true;
+        }
       }
+    } catch (e) {
+      debugPrint('fetch error $e');
     }
     return result;
   }
 
   Future<bool> sendSave() async {
     bool result = false;
-    final response = await http.post(getSaveUrl());
-    if (response.statusCode == 200) {
-      var status = StatusModel();
-      status.fromJson(jsonDecode(response.body));
-      return status.isOk();
+    try {
+      final response = await http.post(getSaveUrl());
+      if (response.statusCode == 200) {
+        var status = StatusModel();
+        status.fromJson(jsonDecode(response.body));
+        return status.isOk();
+      }
+    } catch (e) {
+      debugPrint('save error $e');
     }
     return result;
   }
@@ -154,33 +163,37 @@ class DSPServerModel extends ChangeNotifier {
       if (channel != null) {
         channel!.sink.close();
       }
-      channel = WebSocketChannel.connect(getWsUrl());
-      try {
-        await channel?.ready;
-        _updateConnectionStatus(true);
-        channel?.stream.listen(
-          (dynamic message) {
-            debugPrint('message $message');
-            var json = jsonDecode(message);
-            if (json['faders'] != null) {
-              debugPrint('json $json');
-              receiveFaderValues(json['faders']);
-            }
-          },
-          onDone: () {
-            _updateConnectionStatus(false);
-            debugPrint('ws channel closed');
-          },
-          onError: (error) {
-            _updateConnectionStatus(false);
-            debugPrint('ws error $error');
-          },
-        );
-      } catch (e) {
-        // log error
-        debugPrint('ws error $e');
-        _updateConnectionStatus(false);
-      }
+      WebSocket.connect(getWsUrl().toString())
+          .timeout(WS_CONNECTION_TIMEOUT)
+          .then((WebSocket ws) {
+        try {
+          ws.pingInterval = WS_CONNECTION_TIMEOUT;
+          channel = IOWebSocketChannel(ws);
+          _updateConnectionStatus(true);
+          channel?.stream.listen(
+            (dynamic message) {
+              debugPrint('message $message');
+              var json = jsonDecode(message);
+              if (json['faders'] != null) {
+                debugPrint('json $json');
+                receiveFaderValues(json['faders']);
+              }
+            },
+            onDone: () {
+              _updateConnectionStatus(false);
+              debugPrint('ws channel closed');
+            },
+            onError: (error) {
+              _updateConnectionStatus(false);
+              debugPrint('ws error $error');
+            },
+          );
+        } catch (e) {
+          // log error
+          debugPrint('ws error $e');
+          _updateConnectionStatus(false);
+        }
+      });
     } else {
       _updateConnectionStatus(false);
     }
