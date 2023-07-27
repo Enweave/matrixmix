@@ -1,3 +1,0 @@
-# DSP related stuff, work in progress too...
-
-## [project](sigmastudio_project) for [Sigmastudio](https://www.analog.com/en/design-center/evaluation-hardware-and-software/software/ss_sigst_02.html#software-overview)
