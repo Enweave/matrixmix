@@ -1,6 +1,6 @@
 # Matrixmix
 
-[Matrix mixer](https://en.wikipedia.org/wiki/Matrix_mixer) on a budgetm kinda
+[Matrix mixer](https://en.wikipedia.org/wiki/Matrix_mixer) on a budget, kinda
 
 ## tf is this?
 
